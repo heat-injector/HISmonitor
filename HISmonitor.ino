@@ -1,7 +1,50 @@
-void setup() {
 
-}
+
+//B0 will be used to start the timer
+double hoursCollected = 0;
+//SD is "set" on latching relay, NO contact. When High for 1sec it will shutdown heat.
+int SD = B3;
+//SD is "reset" on latching relay, NC contact. When High for 1sec it will Enable heat.
+int SDreset = B5;
+
+
+void setup() {
+ 
+    pinMode(hoursCollected, INPUT);
+    pinMode(SD, OUTPUT);
+    pinMode(SDreset, OUTPUT);
+    digitalWrite(SD, LOW);
+    digitalWrite(SDreset, LOW);
+    
+    Particle.function("toggleSD", toggleSD);
+    
+    Particle.function("toggleSDreset", toggleSDreset);
+    
+    }
+
+//Command to Shutdown with the "set" on latching relay
+int toggleSD(String command){
+    //requests are case sensitive...Program accepts "off", "Off", or "OFF" to shutdown heat
+    if (command == "off" || command == "Off" || command == "OFF");
+    //SD("set" is the NO contact on the latching relay
+    digitalWrite(SD, HIGH);
+    delay(1500);
+    digitalWrite(SD, LOW);
+    //If heat was shutdown, return "1"
+    return 1;
+    }
+//Command to "Reset" latching relay, Run machine again. 
+int toggleSDreset(String command){
+    //requests are case sensitive...Program accepts "on", "On", or "ON" to enable heat again
+    if (command == "on" || command == "On" || command == "ON");
+    //SDreset("reset" is the NC contact on the latching relay
+    digitalWrite(SDreset, HIGH);
+    delay(1500);
+    digitalWrite(SDreset, LOW);
+    //If heat was enabled, return "1"
+    return 1;
+    }
 
 void loop() {
-
+   
 }
