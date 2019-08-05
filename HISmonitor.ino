@@ -1,13 +1,23 @@
-#include <time.h>
+#include "Adafruit_LIS3DH.h"
+#include "Adafruit_GPS.h"
+#include "Adafruit_Sensor.h"
+#include "AssetTracker.h"
+#include "time.h"
 
-//Reported Variable(required double) to GoogleSheetAPI
-double TotalHeatTime = 0;
+//Code to enable a feature in the electron called reatained memory
+STARTUP(System.enableFeature(FEATURE_RETAINED_MEMORY));
+
+
 //recorded unix time the pin went HIGH
 float HeatStartTime = 0;
 //recorded unix time the pun went LOW
 float HeatEndTime = 0;
 //calculated deltaTIME between Start and End
-float DeltaHeatTime = 0;
+//float DeltaHeatTime = 0;
+float DeltaHeatTime = (HeatEndTime - HeatStartTime);
+//Reported Variable(required double) to GoogleSheetAPI
+retained double TotalHeatTime = (TotalHeatTime + DeltaHeatTime);
+
 //Blue led on board
 int led = D7;
 //SD is "set" on latching relay, NO contact. When High for 1sec it will shutdown heat.
@@ -17,35 +27,27 @@ int SDreset = B5;
 
 
 void setup() {
-   //Declaring B0 as input
+    //Declaring B0 as input
     pinMode(B0, INPUT);
-
     //Start with on-board led off
     pinMode(led, OUTPUT);
-    digitalWrite(led, LOW);
     
-    //No power to lating relay unless done by admin
+    //No power to latching relay unless done by admin
     pinMode(SD, OUTPUT);
     digitalWrite(SD, LOW);
-    
-    ////No power to lating relay unless done by admin
+    ////No power to latching relay unless done by admin
     pinMode(SDreset, OUTPUT);
     digitalWrite(SDreset, LOW);
     
     Particle.function("toggleSD", toggleSD);
     Particle.function("toggleSDreset", toggleSDreset);
     Particle.variable("TotalHeatTime", TotalHeatTime);
-    
+      
+}
 /*
 Start Hour Meter Code */
  
-  do {
-        digitalWrite(led, HIGH);
-        //HeatStartTime=time_t();
-    }   while(digitalRead(B0));
-       delay(150);
-       digitalWrite(led, LOW);
-}
+ 
     //While B0==true
 //    if (digitalRead(B0)); 
     
@@ -90,12 +92,11 @@ int toggleSDreset(String command){
 
 
 void loop() {
-    /*
-    while (digitalRead(B0)){
+    if (digitalRead(B0==TRUE)); {
     digitalWrite(led, HIGH);
-    }
-    else {
+    time_t now = HeatStartTime;
+  } if (digitalRead(B0==FALSE)); {
     digitalWrite(led, LOW);
-    }
-    */
+    time_t now = HeatEndTime;
+  }
 }
